@@ -1,0 +1,5 @@
+.ccls-cache/
+build/
+imgui.ini
+sim
+compile_commands.json
