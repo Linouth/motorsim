@@ -2,7 +2,7 @@ EXE = sim
 IMGUI_DIR = dependencies/imgui
 BUILD_DIR = build
 #SOURCES = src/main.cpp src/particle_system.cpp
-CPP_FILES = main.cpp euler_ode_solver.cpp particle_system.cpp gravity.cpp stokes_drag.cpp
+CPP_FILES = main.cpp euler_ode_solver.cpp particle_system.cpp gravity.cpp stokes_drag.cpp drag.cpp
 SOURCES = $(addprefix src/, $(CPP_FILES))
 SOURCES += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_demo.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
 SOURCES += $(IMGUI_DIR)/backends/imgui_impl_sdl.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
@@ -10,7 +10,8 @@ OBJS = $(addprefix $(BUILD_DIR)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)
 UNAME_S := $(shell uname -s)
 LINUX_GL_LIBS = -lGL
 
-CXXFLAGS = -std=c++20 -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends
+
+CXXFLAGS = -std=c++20 -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends $(shell pkgconf --cflags eigen3)
 CXXFLAGS += -g -Wall -Wformat
 LIBS =
 

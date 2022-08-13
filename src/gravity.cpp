@@ -8,7 +8,7 @@ Gravity::Gravity() {
 
 void Gravity::apply(ParticleState *states, ParticleInfo *infos, size_t count) {
     for (size_t i = 0; i < count; i++) {
-        infos->f[2] += -infos->m * g_;
+        infos->f[2] -= infos->m * g_;
     }
 }
 

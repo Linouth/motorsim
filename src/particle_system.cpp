@@ -64,6 +64,10 @@ ParticleState const& ParticleSystem::getState(uint index) {
     return particles_state_.at(index);
 }
 
+ParticleInfo const& ParticleSystem::getInfo(uint index) {
+    return particles_info_.at(index);
+}
+
 void ParticleSystem::clearForceAccumulators() {
     // TODO: Again, more general method, so nth dimensional vectors can be used
     for (auto &info : particles_info_) {

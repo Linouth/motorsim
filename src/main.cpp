@@ -13,6 +13,7 @@
 #include "euler_ode_solver.h"
 #include "gravity.h"
 #include "stokes_drag.h"
+#include "drag.h"
 
 #include <cassert>
 #include <vector>
@@ -102,7 +103,10 @@ int main(int, char**)
     Gravity g = Gravity();
     sys.addForce(&g);
 
-    StokesDrag d = StokesDrag(-1, 18.5e-6, 0.01);
+    //StokesDrag sd = StokesDrag(-1, 18.5e-6, 0.01);
+    //sys.addForce(&sd);
+
+    Drag d = Drag(-1, 1.184, 0.47, M_PI*0.01*0.01);
     sys.addForce(&d);
 
     EulerOdeSolver ode = EulerOdeSolver{};
@@ -117,7 +121,8 @@ int main(int, char**)
         if (prev_sim_time <= (SDL_GetTicks() - 1000.0/kSimRate)) {
             ode.step(sys, 0.001);
             //out[array_index] = sys.getState(0).x[2];
-            out[array_index] = sys.getState(0).v[2];
+            //out[array_index] = sys.getState(0).v[2];
+            out[array_index] = sys.getInfo(0).f[2];
             array_index = (array_index + 1) % array_len;
 
             prev_sim_time = SDL_GetTicks();

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "force_generator.h"
-#include "particle_system.h"
+#include "particle.h"
 
 // Calculates force as the result of the drag defined by Stokes' Law.
 // Stokes' law assumes the object is a sphere.
@@ -25,5 +25,5 @@ public:
     float R_;
 
 private:
-    void applySingleParticle(ParticleState state, ParticleInfo info);
+    void applySingleParticle(ParticleState &state, ParticleInfo &info);
 };

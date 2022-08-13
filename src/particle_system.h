@@ -16,6 +16,7 @@ public:
     void addForce(ForceGenerator* force);
 
     ParticleState const& getState(uint index);
+    ParticleInfo const& getInfo(uint index);
 
     float t;  // Simulation clock
 private:
