@@ -14,6 +14,7 @@
 #include "force/gravity.h"
 #include "force/stokes_drag.h"
 #include "force/drag.h"
+#include "force/spring.h"
 
 #include <cassert>
 #include <vector>
@@ -107,10 +108,12 @@ int main(int, char**)
     ParticleInfo initial_info = { 5, {0, 0, 0} };
     sys.addParticle(initial_state, initial_info);
 
+    sys.addParticle({{5,0,3}, {0,0,0}}, {10, {0,0,0}});
+
     std::random_device rd;
     auto gen = std::mt19937(rd());
     auto dis = std::uniform_real_distribution<float>(0, 100);
-    for (uint c = 0; c < 1000000; c++) {
+    for (uint c = 0; c < 10000; c++) {
         sys.addParticle(
                 { Eigen::Vector3f::Random() * 10, Eigen::Vector3f::Random() * 50 },
                 { dis(gen), {0, 0, 0} });
@@ -126,6 +129,9 @@ int main(int, char**)
 
     Drag d = Drag(-1, 1.184, 0.47, M_PI*0.01*0.01);
     sys.addForce(&d);
+
+    Spring spring(0, 1, 1, 20, 1);
+    sys.addForce(&spring);
 
     EulerOdeSolver ode = EulerOdeSolver{};
 
@@ -146,7 +152,7 @@ int main(int, char**)
             ode.step(sys, 0.001);
             const auto t1 = std::chrono::high_resolution_clock::now();
 
-            //out[array_index] = sys.getState(active_particlex[2];
+            //out[array_index] = sys.getState(active_particle).x[2];
             out[array_index] = sys.getState(active_particle).v[2];
             //out[array_index] = sys.getInfo(active_particle).f[2];
             array_index = (array_index + 1) % array_len;

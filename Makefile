@@ -1,12 +1,18 @@
 EXE = sim
 IMGUI_DIR = dependencies/imgui
 BUILD_DIR = build
-#SOURCES = src/main.cpp src/particle_system.cpp
-CPP_FILES = main.cpp euler_ode_solver.cpp particle_system.cpp force/gravity.cpp force/stokes_drag.cpp force/drag.cpp
-SOURCES = $(addprefix src/, $(CPP_FILES))
-SOURCES += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_demo.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
-SOURCES += $(IMGUI_DIR)/backends/imgui_impl_sdl.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
-OBJS = $(addprefix $(BUILD_DIR)/, $(addsuffix .o, $(basename $(notdir $(SOURCES)))))
+
+CPP_SOURCES = main.cpp euler_ode_solver.cpp particle_system.cpp force/gravity.cpp force/stokes_drag.cpp force/drag.cpp force/spring.cpp
+
+SOURCES += $(CPP_SOURCES)
+OBJS = $(CPP_SOURCES:.cpp=.o)
+
+IMGUI_SOURCES = $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_demo.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
+IMGUI_SOURCES += $(IMGUI_DIR)/backends/imgui_impl_sdl.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
+SOURCES += $(IMGUI_SOURCES)
+OBJS += $(addsuffix .o, $(basename $(notdir $(IMGUI_SOURCES))))
+
+
 UNAME_S := $(shell uname -s)
 LINUX_GL_LIBS = -lGL
 
@@ -61,6 +67,7 @@ endif
 ##---------------------------------------------------------------------
 
 $(BUILD_DIR)/%.o:src/%.cpp
+	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 $(BUILD_DIR)/%.o:$(IMGUI_DIR)/%.cpp
@@ -72,8 +79,11 @@ $(BUILD_DIR)/%.o:$(IMGUI_DIR)/backends/%.cpp
 all: $(EXE)
 	@echo Build complete for $(ECHO_MESSAGE)
 
-$(EXE): $(OBJS)
+$(EXE): $(addprefix $(BUILD_DIR)/, $(OBJS))
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
 
 clean:
-	rm -f $(EXE) $(OBJS)
+	rm -f $(EXE) $(addprefix $(BUILD_DIR)/, $(OBJS))
+
+tmp:
+	@echo $(addsuffix .o, $(basename $(notdir $(IMGUI_SOURCES))))
