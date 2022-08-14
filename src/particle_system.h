@@ -1,6 +1,6 @@
 #pragma once
 
-#include "force_generator.h"
+#include "force/force_generator.h"
 #include "particle.h"
 
 #include <stdlib.h>

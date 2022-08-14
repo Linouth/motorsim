@@ -1,7 +1,7 @@
 #pragma once
 
 #include "force_generator.h"
-#include "particle.h"
+#include "../particle.h"
 
 // Implementation for the square drag equation
 class Drag : public ForceGenerator {

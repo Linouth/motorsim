@@ -11,9 +11,9 @@
 
 #include "particle_system.h"
 #include "euler_ode_solver.h"
-#include "gravity.h"
-#include "stokes_drag.h"
-#include "drag.h"
+#include "force/gravity.h"
+#include "force/stokes_drag.h"
+#include "force/drag.h"
 
 #include <cassert>
 #include <vector>
@@ -110,7 +110,7 @@ int main(int, char**)
     std::random_device rd;
     auto gen = std::mt19937(rd());
     auto dis = std::uniform_real_distribution<float>(0, 100);
-    for (uint c = 0; c < 10000; c++) {
+    for (uint c = 0; c < 1000000; c++) {
         sys.addParticle(
                 { Eigen::Vector3f::Random() * 10, Eigen::Vector3f::Random() * 50 },
                 { dis(gen), {0, 0, 0} });

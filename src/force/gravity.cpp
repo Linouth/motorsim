@@ -1,6 +1,4 @@
-#include "particle_system.h"
 #include "gravity.h"
-
 
 Gravity::Gravity() {
     g_ = 9.81;

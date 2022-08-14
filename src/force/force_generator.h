@@ -2,7 +2,7 @@
 
 #include "stdlib.h"
 
-#include "particle.h"
+#include "../particle.h"
 
 class ForceGenerator {
 public:
