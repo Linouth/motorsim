@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <Eigen/Dense>
 
 #include "particle_system.h"
 
@@ -11,5 +12,5 @@ public:
     void step(ParticleSystem &p, float dt);
 
 private:
-    std::vector<float> derivitives;
+    std::vector<Eigen::Vector3f> derivitives;
 };

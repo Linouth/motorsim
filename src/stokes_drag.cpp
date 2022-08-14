@@ -10,9 +10,7 @@ StokesDrag::StokesDrag(int index, float viscosity, float radius) {
 }
 
 void StokesDrag::applySingleParticle(ParticleState &state, ParticleInfo &info) {
-    for (uint i = 0; i < 3; i++) {
-        info.f[i] -= 6 * M_PI * mu_ * R_ * state.v[i];
-    }
+    info.f -= 6 * M_PI * mu_ * R_ * state.v;
 }
 
 void StokesDrag::apply(ParticleState *states, ParticleInfo *infos, size_t count) {

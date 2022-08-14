@@ -12,7 +12,7 @@ LINUX_GL_LIBS = -lGL
 
 
 CXXFLAGS = -std=c++20 -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends $(shell pkgconf --cflags eigen3)
-CXXFLAGS += -g -Wall -Wformat
+CXXFLAGS += -g -Wall -Wformat -O2
 LIBS =
 
 ##---------------------------------------------------------------------

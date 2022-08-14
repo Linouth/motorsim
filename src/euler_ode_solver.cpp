@@ -1,7 +1,9 @@
+#include <Eigen/Dense>
+
 #include "euler_ode_solver.h"
 
 EulerOdeSolver::EulerOdeSolver() {
-    derivitives = std::vector<float>(512);
+    derivitives = std::vector<Eigen::Vector3f>(512);
 }
 
 void EulerOdeSolver::step(ParticleSystem &p, float dt) {

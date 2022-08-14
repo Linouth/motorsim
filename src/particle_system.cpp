@@ -10,14 +10,14 @@ size_t ParticleSystem::vectorSize() {
     return 6 * particles_state_.size();
 }
 
-void ParticleSystem::statesUpdate(std::vector<float> &updated) {
-    assert(particles_state_.size() == updated.size());
-    //std::copy(updated.begin(), updated.end(), particles_state_.begin());
-    // TODO: What is the 'proper' c++ way to do this? 
-    std::memcpy(particles_state_.data(), updated.data(), updated.size());
-}
+//void ParticleSystem::statesUpdate(std::vector<Eigen::Vector3f> &updated) {
+//    assert(particles_state_.size() == updated.size());
+//    //std::copy(updated.begin(), updated.end(), particles_state_.begin());
+//    // TODO: What is the 'proper' c++ way to do this? 
+//    std::memcpy(particles_state_.data(), updated.data(), updated.size());
+//}
 
-void ParticleSystem::statesDerive(std::vector<float> &dst) {
+void ParticleSystem::statesDerive(std::vector<Eigen::Vector3f> &dst) {
     dst.clear();
 
     // Reset all forces
@@ -31,21 +31,18 @@ void ParticleSystem::statesDerive(std::vector<float> &dst) {
         auto info = particles_info_.at(i);
 
         // x_dot = v
-        dst.push_back(state.v[0]);
-        dst.push_back(state.v[1]);
-        dst.push_back(state.v[2]);
+        dst.push_back(state.v);
         // v_dot = f/m
-        dst.push_back(info.f[0] / info.m);
-        dst.push_back(info.f[1] / info.m);
-        dst.push_back(info.f[2] / info.m);
+        dst.push_back(info.f / info.m);
     }
 }
 
-void ParticleSystem::statesAdd(std::vector<float> &vals) {
+void ParticleSystem::statesAdd(std::vector<Eigen::Vector3f> &vals) {
     size_t ind = 0;
 
-    float* s = reinterpret_cast<float*>(particles_state_.data());
-    for (size_t i = 0; i < vectorSize(); i++) {
+    Eigen::Vector3f* s = reinterpret_cast<Eigen::Vector3f*>(particles_state_.data());
+    const uint state_size = sizeof(ParticleState) / sizeof(Eigen::Vector3f);
+    for (size_t i = 0; i < particles_state_.size() * state_size; i++) {
         s[i] += vals.at(ind++);
     }
 }
@@ -66,6 +63,10 @@ ParticleState const& ParticleSystem::getState(uint index) {
 
 ParticleInfo const& ParticleSystem::getInfo(uint index) {
     return particles_info_.at(index);
+}
+
+uint ParticleSystem::count() {
+    return particles_state_.size();
 }
 
 void ParticleSystem::clearForceAccumulators() {

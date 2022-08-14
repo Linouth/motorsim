@@ -19,9 +19,12 @@
 #include <vector>
 #include <array>
 #include <memory>
+#include <random>
+#include <chrono>
+#include <iostream>
 
 const float kFrameRate = 60.0;
-const float kSimRate = 60000.0;
+const float kSimRate = 60000000000.0;
 
 // Main code
 int main(int, char**)
@@ -96,9 +99,24 @@ int main(int, char**)
     float out[array_len] = {0};
 
     ParticleSystem sys = ParticleSystem{};
+    //ParticleState initial_state = { {0, 0, 0}, {0, 0, 10} };
+    //ParticleInfo initial_info = { 5, {0, 0, 0} };
+    //sys.addParticle(initial_state, initial_info);
+
     ParticleState initial_state = { {0, 0, 0}, {0, 0, 10} };
     ParticleInfo initial_info = { 5, {0, 0, 0} };
     sys.addParticle(initial_state, initial_info);
+
+    std::random_device rd;
+    auto gen = std::mt19937(rd());
+    auto dis = std::uniform_real_distribution<float>(0, 100);
+    for (uint c = 0; c < 10000; c++) {
+        sys.addParticle(
+                { Eigen::Vector3f::Random() * 10, Eigen::Vector3f::Random() * 50 },
+                { dis(gen), {0, 0, 0} });
+    }
+
+    //sys.addParticle(initial_state, initial_info);
 
     Gravity g = Gravity();
     sys.addForce(&g);
@@ -111,6 +129,11 @@ int main(int, char**)
 
     EulerOdeSolver ode = EulerOdeSolver{};
 
+    int active_particle = 0;
+    uint sum = 0;
+    const uint sum_len = 1000;
+    uint sum_count = 0;
+
     // Main loop
     bool done = false;
     uint prev_render_time = 0;
@@ -119,13 +142,24 @@ int main(int, char**)
     {
 
         if (prev_sim_time <= (SDL_GetTicks() - 1000.0/kSimRate)) {
+            const auto t0 = std::chrono::high_resolution_clock::now();
             ode.step(sys, 0.001);
-            //out[array_index] = sys.getState(0).x[2];
-            //out[array_index] = sys.getState(0).v[2];
-            out[array_index] = sys.getInfo(0).f[2];
+            const auto t1 = std::chrono::high_resolution_clock::now();
+
+            //out[array_index] = sys.getState(active_particlex[2];
+            out[array_index] = sys.getState(active_particle).v[2];
+            //out[array_index] = sys.getInfo(active_particle).f[2];
             array_index = (array_index + 1) % array_len;
 
             prev_sim_time = SDL_GetTicks();
+
+            const auto duration = duration_cast<std::chrono::microseconds>(t1 - t0);
+            //std::cout << "Sim took this many microseconds:" << duration.count() << std::endl;
+
+            if (sum_count++ < sum_len)
+                sum += duration.count();
+            else
+                std::cout << "Average duration of: " << sum / sum_len << "us" << std::endl;
         }
 
         // Only render the required number of times for the set framerate
@@ -161,7 +195,49 @@ int main(int, char**)
 
         auto win_size = ImGui::GetContentRegionAvail();
         ImGui::PlotLines("Frame Times", out, array_len, 0, NULL, FLT_MAX, FLT_MAX, win_size);
-        ImGui::End();
+        ImGui::End(); // Plotting Window
+
+        ImGui::Begin("Particles");
+
+        ImGuiTableFlags flags = ImGuiTableFlags_RowBg | ImGuiTableFlags_Sortable | ImGuiTableFlags_Resizable;
+        ImVec2 outer_size = ImVec2(0.0f, ImGui::GetTextLineHeightWithSpacing() * 8);
+
+        if (ImGui::BeginTable("particle_table", 4, flags, outer_size)) {
+            ImGui::TableSetupColumn("Particle #", ImGuiTableColumnFlags_DefaultSort, 0.0f);
+            ImGui::TableSetupColumn("Mass");
+            ImGui::TableSetupColumn("Position");
+            ImGui::TableSetupColumn("Velocity");
+            ImGui::TableHeadersRow();
+
+            const uint particle_count = sys.count();
+            ImGuiListClipper clipper;
+            clipper.Begin(particle_count);
+            while (clipper.Step()) {
+                for (int index = clipper.DisplayStart; index < clipper.DisplayEnd; index++) {
+                    auto state = sys.getState(index);
+                    auto info = sys.getInfo(index);
+
+                    ImGui::TableNextRow();
+                    ImGui::TableSetColumnIndex(0);
+                    ImGuiSelectableFlags sel_flags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap;
+                    char label[32];
+                    sprintf(label, "%d", index);
+                    if (ImGui::Selectable(label, active_particle == index, sel_flags)) {
+                        active_particle = index;
+                    }
+
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::Text("%f", info.m);
+                    ImGui::TableSetColumnIndex(2);
+                    ImGui::Text("%f, %f, %f", state.x[0], state.x[1], state.x[2]);
+                    ImGui::TableSetColumnIndex(3);
+                    ImGui::Text("%f, %f, %f", state.v[0], state.v[1], state.v[2]);
+                }
+            }
+        }
+        ImGui::EndTable();
+
+        ImGui::End(); // Particles
 
 
         // Rendering

@@ -10,11 +10,9 @@ Drag::Drag(int index, float fluid_density, float drag_coeff, float cross_area) {
 }
 
 void Drag::applySingleParticle(ParticleState &state, ParticleInfo &info) {
-    // TODO: Add proper vector operations
-    for (uint i = 0; i < 3; i++) {
-        int sign = state.v[i] < 0 ? 1 : -1;
-        info.f[i] += sign * 0.5 * rho_ * Cd_ * A_ * state.v[i] * state.v[i];
-    }
+    // NOTE: using the coefficient-wise abs, so that directional information is
+    // not removed due to the square.
+    info.f -= 0.5 * rho_ * Cd_ * A_ * state.v.cwiseAbs().cwiseProduct(state.v);
 }
 
 void Drag::apply(ParticleState *states, ParticleInfo *infos, size_t count) {
