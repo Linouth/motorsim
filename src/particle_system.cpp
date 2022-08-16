@@ -42,6 +42,10 @@ void ParticleSystem::statesAdd(std::vector<Eigen::Vector3f> &vals) {
 
     Eigen::Vector3f* s = reinterpret_cast<Eigen::Vector3f*>(particles_state_.data());
     const uint state_size = sizeof(ParticleState) / sizeof(Eigen::Vector3f);
+
+    // Make sure there are enough new vals available;
+    assert(vals.size() >= particles_state_.size() * state_size);
+
     for (size_t i = 0; i < particles_state_.size() * state_size; i++) {
         s[i] += vals.at(ind++);
     }

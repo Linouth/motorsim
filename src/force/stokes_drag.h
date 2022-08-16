@@ -14,7 +14,7 @@
 class StokesDrag : public ForceGenerator {
 public:
     StokesDrag(int index, float viscosity, float radius);
-    virtual void apply(ParticleState *states, ParticleInfo *infos, size_t count);
+    void apply(const ParticleState *states, ParticleInfo *infos, size_t count) override;
 
     // Particle to act on. Index of -1 means; act on all particles
     int index_;
@@ -25,5 +25,5 @@ public:
     float R_;
 
 private:
-    void applySingleParticle(ParticleState &state, ParticleInfo &info);
+    void applySingleParticle(const ParticleState &state, ParticleInfo &info);
 };

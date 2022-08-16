@@ -2,16 +2,18 @@
 
 #include <Eigen/Dense>
 
+typedef Eigen::Vector3f Vec;
+
 struct ParticleState {
     //Position
-    Eigen::Vector3f x;
+    Vec x;
     // Velocity
-    Eigen::Vector3f v;
+    Vec v;
 };
 
 struct ParticleInfo {
     // Mass of the particle
     float m;
     // Force accumulator
-    Eigen::Vector3f f;
+    Vec f;
 };

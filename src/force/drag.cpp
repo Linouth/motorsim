@@ -9,13 +9,13 @@ Drag::Drag(int index, float fluid_density, float drag_coeff, float cross_area) {
     A_ = cross_area;
 }
 
-void Drag::applySingleParticle(ParticleState &state, ParticleInfo &info) {
+void Drag::applySingleParticle(const ParticleState &state, ParticleInfo &info) {
     // NOTE: using the coefficient-wise abs, so that directional information is
     // not removed due to the square.
     info.f -= 0.5 * rho_ * Cd_ * A_ * state.v.cwiseAbs().cwiseProduct(state.v);
 }
 
-void Drag::apply(ParticleState *states, ParticleInfo *infos, size_t count) {
+void Drag::apply(const ParticleState *states, ParticleInfo *infos, size_t count) {
     if (index_ == -1) {
         for (size_t i = 0; i < count; i++) {
             applySingleParticle(states[i], infos[i]);

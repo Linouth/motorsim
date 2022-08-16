@@ -6,6 +6,6 @@
 
 class ForceGenerator {
 public:
-    virtual void apply(ParticleState *states, ParticleInfo *infos, size_t count) = 0;
+    virtual void apply(const ParticleState *states, ParticleInfo *infos, size_t count) = 0;
 };
 

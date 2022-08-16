@@ -13,7 +13,7 @@ Spring::Spring(
     kd_ = damping_constant;
 }
 
-void Spring::apply(ParticleState *states, ParticleInfo *infos, size_t count) {
+void Spring::apply(const ParticleState *states, ParticleInfo *infos, size_t count) {
     assert(index0_ < count && index1_ < count);
     auto &state0 = states[index0_];
     auto &state1 = states[index1_];

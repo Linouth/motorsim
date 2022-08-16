@@ -6,7 +6,7 @@
 class Gravity : public ForceGenerator {
 public:
     Gravity();
-    virtual void apply(ParticleState *states, ParticleInfo *infos, size_t count);
+    void apply(const ParticleState *states, ParticleInfo *infos, size_t count) override;
 
     // Gravitational constant
     float g_;
